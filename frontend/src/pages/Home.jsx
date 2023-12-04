@@ -19,7 +19,13 @@ import {
 import axios from "axios";
 import { baseURL } from "../redux/store";
 import ContactsTable from "../components/ContactsTable";
-import { addContactRequest, addContactSuccess, getContactsFailure, getContactsRequest, getContactsSuccess } from "../redux/action";
+import {
+  addContactRequest,
+  addContactSuccess,
+  getContactsFailure,
+  getContactsRequest,
+  getContactsSuccess,
+} from "../redux/action";
 import { initialContactsData } from "../utils/contactsData";
 
 const Home = () => {
@@ -27,25 +33,26 @@ const Home = () => {
 
   const dispatch = useDispatch();
 
-
   const [contactData, setContactData] = useState(initialContactsData);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchData(`${baseURL}/contacts/getall`);
-  },[])
+  }, []);
 
   const fetchData = (url) => {
     dispatch(getContactsRequest());
-    axios.get(url)
-    .then((res) => {
-      // console.log(res.data);
-      dispatch(getContactsSuccess(res.data))
-    })
-    .catch((err) => {
-      // console.log(err);
-      dispatch(getContactsFailure());
-    })
-  }
+    axios
+      .get(url)
+      .then((res) => {
+        // console.log(res.data);
+        dispatch(getContactsSuccess(res.data));
+      })
+      .catch((err) => {
+        // console.log(err);
+        dispatch(getContactsFailure());
+      });
+  };
 
   const handleChange = (e) => {
     setContactData((prev) => {
@@ -60,22 +67,26 @@ const Home = () => {
     console.log(contactData);
 
     dispatch(addContactRequest());
-    axios.post(`${baseURL}/contacts`, contactData)
-    .then((res) => {
-      dispatch(addContactSuccess(res.data.newContact));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    axios
+      .post(`${baseURL}/contacts`, contactData)
+      .then((res) => {
+        dispatch(addContactSuccess(res.data.newContact));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     setContactData(initialContactsData);
   };
 
   return (
     <Container p="2rem" maxWidth="fit-content">
-      <Button colorScheme="blue" onClick={onOpen}>
-        Add Contact
-      </Button>
+      <Container>
+        <Button colorScheme="blue" onClick={onOpen}>
+          Add Contact
+        </Button>
+        <Input mt="1rem" placeholder="Search Contact" />
+      </Container>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -119,7 +130,7 @@ const Home = () => {
                 <option>Friend</option>
                 <option>Family</option>
               </Select>
-              <Button colorScheme="blue" mr={3} onClick={handleAdd}>
+              <Button colorScheme="blue" mr={3} mt={3} onClick={handleAdd}>
                 Add
               </Button>
             </FormControl>

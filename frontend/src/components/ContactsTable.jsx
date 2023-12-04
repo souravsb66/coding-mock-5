@@ -32,8 +32,16 @@ const ContactsTable = () => {
     })
   }
 
+  // const handleEdit = (id) => {
+
+  // }
+
+  const handleSingleContact = (ele) => {
+    
+  }
+
   return (
-    <TableContainer width="100%">
+    <TableContainer width="100%" mt="2rem">
       <Table variant="striped" colorScheme="teal">
         <Thead>
           <Tr>
@@ -48,7 +56,7 @@ const ContactsTable = () => {
           {contacts.length > 0 &&
             contacts.map((ele) => {
               return (
-                <Tr key={ele._id}>
+                <Tr key={ele._id} onClick={() => {handleSingleContact(ele)}}>
                   <Td>{ele.name}</Td>
                   <Td>{ele.email}</Td>
                   <Td>{ele.phoneNumber}</Td>

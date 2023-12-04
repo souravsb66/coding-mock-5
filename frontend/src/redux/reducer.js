@@ -1,4 +1,4 @@
-import { ADD_CONTACTS_REQUEST, ADD_CONTACTS_SUCCESS, DELETE_CONTACTS_REQUEST, DELETE_CONTACTS_SUCCESS, GET_CONTACTS_FAILURE, GET_CONTACTS_REQUEST, GET_CONTACTS_SUCCESS } from "./actionType"
+import { ADD_CONTACTS_REQUEST, ADD_CONTACTS_SUCCESS, DELETE_CONTACTS_REQUEST, DELETE_CONTACTS_SUCCESS, EDIT_CONTACTS_REQUEST, EDIT_CONTACTS_SUCCESS, GET_CONTACTS_FAILURE, GET_CONTACTS_REQUEST, GET_CONTACTS_SUCCESS } from "./actionType"
 
 const initialState = {
     isLoading: false,
@@ -26,6 +26,14 @@ export const reducer = (state=initialState, {type,payload}) => {
                 return ele._id != payload;
             })
             return {...state, isLoading: false, contacts: [...updatedContacts]};
+        case EDIT_CONTACTS_REQUEST:
+            return {...state, isLoading: true};
+        case EDIT_CONTACTS_SUCCESS:
+            const editedContacts = state.contacts.map((ele) => {
+                return ele._id == payload._id ? payload : ele;
+            })
+            return {...state, isLoading: false, contacts: [...editedContacts]};
+        case EDIT_CONTACTS_REQUEST:
         default:
             return {...state};
     }
