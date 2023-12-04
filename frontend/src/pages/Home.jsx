@@ -62,7 +62,6 @@ const Home = () => {
     dispatch(addContactRequest());
     axios.post(`${baseURL}/contacts`, contactData)
     .then((res) => {
-      // console.log(res.data.newContact);
       dispatch(addContactSuccess(res.data.newContact));
     })
     .catch((err) => {

@@ -11,11 +11,26 @@ import {
   Button,
   ButtonGroup,
 } from "@chakra-ui/react";
+import axios from "axios"
+import { baseURL } from "../redux/store";
+import { deleteContactRequest, deleteContactSuccess } from "../redux/action";
 
 const ContactsTable = () => {
   const { contacts } = useSelector((store) => store);
+  const dispatch = useDispatch();
 
-  console.log(contacts);
+  const handleDelete = (id) => {
+    // console.log(id);
+
+    dispatch(deleteContactRequest());
+    axios.delete(`${baseURL}/contacts/delete/${id}`)
+    .then((res) => {
+      dispatch(deleteContactSuccess(id));
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }
 
   return (
     <TableContainer width="100%">
@@ -32,8 +47,6 @@ const ContactsTable = () => {
         <Tbody>
           {contacts.length > 0 &&
             contacts.map((ele) => {
-
-              console.log(ele);
               return (
                 <Tr key={ele._id}>
                   <Td>{ele.name}</Td>
@@ -43,7 +56,7 @@ const ContactsTable = () => {
                   <Td>
                     <ButtonGroup>
                       <Button colorScheme="green">Edit</Button>
-                      <Button colorScheme="red">Delete</Button>
+                      <Button colorScheme="red" onClick={() => {handleDelete(ele._id)}}>Delete</Button>
                     </ButtonGroup>
                   </Td>
                 </Tr>
