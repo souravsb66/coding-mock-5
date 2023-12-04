@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Button,
   Container,
@@ -15,16 +16,36 @@ import {
   FormLabel,
   Select,
 } from "@chakra-ui/react";
+import axios from "axios";
+import { baseURL } from "../redux/store";
+import ContactsTable from "../components/ContactsTable";
+import { addContactRequest, addContactSuccess, getContactsFailure, getContactsRequest, getContactsSuccess } from "../redux/action";
+import { initialContactsData } from "../utils/contactsData";
 
 const Home = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [contactData, setContactData] = useState({
-    name: "",
-    email: "",
-    phoneNumber: "",
-    label: "",
-  });
+  const dispatch = useDispatch();
+
+
+  const [contactData, setContactData] = useState(initialContactsData);
+
+  useEffect(() => {
+    fetchData(`${baseURL}/contacts/getall`);
+  },[])
+
+  const fetchData = (url) => {
+    dispatch(getContactsRequest());
+    axios.get(url)
+    .then((res) => {
+      // console.log(res.data);
+      dispatch(getContactsSuccess(res.data))
+    })
+    .catch((err) => {
+      // console.log(err);
+      dispatch(getContactsFailure());
+    })
+  }
 
   const handleChange = (e) => {
     setContactData((prev) => {
@@ -37,10 +58,22 @@ const Home = () => {
 
   const handleAdd = () => {
     console.log(contactData);
+
+    dispatch(addContactRequest());
+    axios.post(`${baseURL}/contacts`, contactData)
+    .then((res) => {
+      // console.log(res.data.newContact);
+      dispatch(addContactSuccess(res.data.newContact));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+    setContactData(initialContactsData);
   };
 
   return (
-    <Container p="2rem">
+    <Container p="2rem" maxWidth="fit-content">
       <Button colorScheme="blue" onClick={onOpen}>
         Add Contact
       </Button>
@@ -100,6 +133,8 @@ const Home = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <ContactsTable />
     </Container>
   );
 };
